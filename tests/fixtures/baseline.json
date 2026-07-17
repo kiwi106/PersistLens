@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "schemaVersion": 1,
+    "persistLensVersion": "0.1.0",
+    "createdAtUtc": "2026-01-01T00:00:00+00:00",
+    "operatingContext": {
+      "machine": "fixture-machine",
+      "architecture": "x64",
+      "user": "fixture-user",
+      "isElevated": false
+    },
+    "collectors": [],
+    "errors": []
+  },
+  "entries": [
+    {
+      "stableId": "entry-a",
+      "type": "registryRun",
+      "collector": "fixture",
+      "location": { "value": "HKCU\\Run" },
+      "name": "Changed",
+      "rawValue": "C:\\Fixture\\old.exe",
+      "command": { "raw": "C:\\Fixture\\old.exe", "candidates": [], "confidence": "low", "uncertaintyReason": "fixture" },
+      "metadata": {},
+      "collectedAtUtc": "2026-01-01T00:00:00+00:00",
+      "stateHash": "old"
+    },
+    {
+      "stableId": "entry-removed",
+      "type": "startupFolder",
+      "collector": "fixture",
+      "location": { "value": "C:\\Fixture\\Startup" },
+      "name": "Removed",
+      "rawValue": "C:\\Fixture\\removed.exe",
+      "command": { "raw": "C:\\Fixture\\removed.exe", "candidates": [], "confidence": "low", "uncertaintyReason": "fixture" },
+      "metadata": {},
+      "collectedAtUtc": "2026-01-01T00:00:00+00:00",
+      "stateHash": "removed"
+    }
+  ]
+}

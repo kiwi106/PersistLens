@@ -1,0 +1,3 @@
+# Security model
+
+Collected values are untrusted. PersistLens never invokes a shell or executes discovered commands. Task Scheduler collection uses the local Task Scheduler 2.0 COM service in read-only mode; COM objects are released in the isolated Windows source. Definition XML is parsed with DTDs and external resolvers disabled. Startup file enumeration does not follow discovered reparse points. Hashing uses bounded, sequential streaming with sharing flags to tolerate change/removal races. Snapshot names cannot escape the configured store directory. The tool is read-only and never requests elevation automatically.

@@ -1,0 +1,39 @@
+# Build output
+**/bin/
+**/obj/
+artifacts/
+publish/
+
+# IDEs
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Tests and coverage
+TestResults/
+coverage/
+coverage.*
+*.trx
+
+# Packages and local data
+*.nupkg
+*.snupkg
+logs/
+*.log
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+*.sqlite3
+snapshots/
+persistlens-reports/
+
+# OS and temporary files
+Thumbs.db
+Desktop.ini
+*.tmp
+*.temp
+~$*

@@ -1,0 +1,41 @@
+{
+  "metadata": {
+    "schemaVersion": 1,
+    "persistLensVersion": "0.1.0",
+    "createdAtUtc": "2026-01-02T00:00:00+00:00",
+    "operatingContext": {
+      "machine": "fixture-machine",
+      "architecture": "x64",
+      "user": "fixture-user",
+      "isElevated": false
+    },
+    "collectors": [],
+    "errors": []
+  },
+  "entries": [
+    {
+      "stableId": "entry-a",
+      "type": "registryRun",
+      "collector": "fixture",
+      "location": { "value": "HKCU\\Run" },
+      "name": "Changed",
+      "rawValue": "C:\\Fixture\\new.exe",
+      "command": { "raw": "C:\\Fixture\\new.exe", "candidates": [], "confidence": "low", "uncertaintyReason": "fixture" },
+      "metadata": {},
+      "collectedAtUtc": "2026-01-02T00:00:00+00:00",
+      "stateHash": "new"
+    },
+    {
+      "stableId": "entry-added",
+      "type": "service",
+      "collector": "fixture",
+      "location": { "value": "HKLM\\System\\Services\\Added" },
+      "name": "Added",
+      "rawValue": "C:\\Fixture\\added.exe",
+      "command": { "raw": "C:\\Fixture\\added.exe", "candidates": [], "confidence": "low", "uncertaintyReason": "fixture" },
+      "metadata": {},
+      "collectedAtUtc": "2026-01-02T00:00:00+00:00",
+      "stateHash": "added"
+    }
+  ]
+}

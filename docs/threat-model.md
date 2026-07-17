@@ -1,0 +1,3 @@
+# Threat model
+
+Malformed Registry values, Task Scheduler definition XML, paths, links, and files are handled as data, not instructions. Task Scheduler RPC/COM failures and per-folder or per-task access denials become partial errors while accessible tasks are retained. XML entity expansion is disabled and definition size is bounded. Large files are bounded; task XML has a character limit. Snapshots can be altered by a local user with write access and are not signed; protect the storage directory if integrity matters. Reports can disclose paths and command-line secrets. Dependencies are limited to the .NET runtime and test-only xUnit packages.

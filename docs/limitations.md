@@ -1,0 +1,3 @@
+# Limitations
+
+This MVP is Windows-only. Service current-state collection, authoritative Authenticode trust evaluation, file ownership, and shortcut resolution are not implemented. A readable embedded certificate is reported as limited evidence only, never as trusted Authenticode validation. Task runtime state is not read. Task Scheduler 2.0 can deny access to protected tasks or folders; PersistLens preserves accessible tasks and reports those failures individually. Commands with ambiguous unquoted paths remain unresolved by design. Large files above 512 MiB are not hashed. No output redaction switch exists yet; handle snapshots carefully.
