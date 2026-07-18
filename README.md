@@ -17,11 +17,13 @@ Les mécanismes de démarrage automatique sont nombreux et leurs changements mé
 - Snapshots JSON locaux, écriture atomique, lecture, liste et suppression.
 - Diff déterministe : entrées ajoutées, supprimées et modifiées.
 - SHA-256 en streaming pour les fichiers locaux résolus.
+- Validation Authenticode Windows avec distinction entre signature présente, validité cryptographique et confiance de chaîne.
 - Sorties terminal et JSON scriptables.
 
 ## 4. Fonctionnalités partielles
 
-- Un certificat de signature lisible est une preuve limitée : PersistLens ne valide pas la chaîne de confiance Authenticode Windows.
+- Une signature Authenticode approuvée reste une preuve technique limitée : elle ne constitue jamais un verdict de sûreté ou de légitimité.
+- La vérification de révocation est effectuée avec le cache Windows local uniquement : PersistLens ne contacte pas Internet et peut signaler que la révocation est non vérifiable.
 - Les raccourcis `.lnk` sont inventoriés, sans résolution de cible, arguments ou dossier de travail.
 - Le propriétaire de fichier et l’état courant des services/tâches ne sont pas collectés.
 - Les tâches ou dossiers protégés peuvent rester inaccessibles et produire une erreur partielle structurée.
@@ -83,6 +85,8 @@ PersistLens ne transmet aucune donnée, ne demande aucun compte et n’utilise n
 ## 12. Sécurité
 
 PersistLens n’exécute jamais les commandes ou tâches découvertes et ne modifie ni ne supprime les mécanismes de persistance. Certaines informations peuvent nécessiter des permissions supplémentaires. Consultez [docs/security-model.md](docs/security-model.md) et [docs/threat-model.md](docs/threat-model.md).
+
+Une signature Authenticode approuvée signifie que Windows a validé la signature et sa chaîne selon sa politique locale ; elle ne prouve jamais qu’un programme est sûr, légitime ou inoffensif.
 
 ## 13. Architecture
 

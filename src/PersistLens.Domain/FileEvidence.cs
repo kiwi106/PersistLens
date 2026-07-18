@@ -7,7 +7,18 @@ public sealed record SignatureEvidence(
     string? Thumbprint,
     DateTimeOffset? NotBeforeUtc,
     DateTimeOffset? NotAfterUtc,
-    string? TrustMessage);
+    string? TrustMessage,
+    int? NativeStatus = null,
+    bool? HasSignature = null,
+    bool? IsCryptographicallyValid = null,
+    bool? IsChainTrusted = null,
+    bool? HasTimestamp = null,
+    DateTimeOffset? TimestampUtc = null,
+    string? TimestampSubject = null,
+    string? CertificateSerialNumber = null,
+    string? SignatureAlgorithm = null,
+    string? TrustSource = null,
+    IReadOnlyList<string>? PartialErrors = null);
 
 public sealed record FileEvidence(
     string RawPath,
