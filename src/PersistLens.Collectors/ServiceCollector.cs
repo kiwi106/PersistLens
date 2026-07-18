@@ -12,11 +12,11 @@ public sealed class ServiceCollector(WindowsCommandParser parser, IClock clock) 
     public Task<CollectorResult> CollectAsync(CollectionContext context, CancellationToken cancellationToken)
     {
         var entries = new List<PersistenceEntry>(); var errors = new List<CollectionError>();
-        if (!OperatingSystem.IsWindows()) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(ServiceCollector), "Windows", "Service collection is supported only on Windows.")]));
+        if (!OperatingSystem.IsWindows()) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(ServiceCollector), "Windows", "La collecte des services est prise en charge uniquement sous Windows.")]));
         try
         {
             using var root = Registry.LocalMachine.OpenSubKey(ServicesPath, writable: false);
-            if (root is null) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(ServiceCollector), ServicesPath, "Services key is unavailable.")]));
+            if (root is null) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(ServiceCollector), ServicesPath, "La clé des services est indisponible.")]));
             foreach (var serviceName in root.GetSubKeyNames())
             {
                 cancellationToken.ThrowIfCancellationRequested();

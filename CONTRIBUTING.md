@@ -1,3 +1,5 @@
-# Contributing
+# Contribuer
 
-Keep changes local-first and read-only. Add tests for domain behavior and avoid tests that create services, tasks, or persistent Registry entries. Run restore, Release build, tests, and format verification before submitting a pull request. Do not include real snapshots or sensitive reports.
+Les contributions doivent préserver l’approche local-first et lecture seule. Ajoutez des tests adaptés et évitez tout test qui crée service, tâche planifiée ou entrée Registry persistante. Exécutez restore, build Release, tests et vérification de formatage avant une pull request.
+
+N’ajoutez jamais de snapshots réels, de rapports sensibles, de secrets ou de données propres à une machine.

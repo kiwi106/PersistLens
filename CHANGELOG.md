@@ -1,5 +1,5 @@
-# Changelog
+# Journal des changements
 
 ## 0.1.0 - 2026-07-18
 
-Initial PersistLens MVP: Windows persistence inventory, local JSON snapshots, deterministic diffs, reporting, tests, and documentation.
+Première version du MVP PersistLens : inventaire des mécanismes de persistance Windows, snapshots JSON locaux, diff déterministe, rapports, tests et documentation.

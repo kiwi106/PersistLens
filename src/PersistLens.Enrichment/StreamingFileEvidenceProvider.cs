@@ -16,20 +16,20 @@ public sealed class StreamingFileEvidenceProvider(int maximumMegabytes = 512) : 
         try { normalized = Path.GetFullPath(expanded); }
         catch (Exception exception) when (exception is ArgumentException or NotSupportedException or PathTooLongException)
         {
-            return Unavailable(rawPath, expanded, null, SignatureStatus.Error, "The path could not be normalized.");
+            return Unavailable(rawPath, expanded, null, SignatureStatus.Error, "Le chemin n’a pas pu être normalisé.");
         }
         try
         {
             var info = new FileInfo(normalized);
-            if (!info.Exists) return Unavailable(rawPath, expanded, normalized, SignatureStatus.FileMissing, "The target does not exist.");
+            if (!info.Exists) return Unavailable(rawPath, expanded, normalized, SignatureStatus.FileMissing, "La cible n’existe pas.");
             if (info.Length > maximumBytes) return new(rawPath, expanded, normalized, true, info.Extension, info.Length, info.CreationTimeUtc, info.LastWriteTimeUtc, null, null,
-                new(SignatureStatus.Unsupported, null, null, null, null, null, "Hash skipped because file exceeds configured limit."), EvidenceConfidence.Medium, "Hash skipped because file exceeds configured limit.");
+                new(SignatureStatus.Unsupported, null, null, null, null, null, "Hash ignoré car le fichier dépasse la limite configurée."), EvidenceConfidence.Medium, "Hash ignoré car le fichier dépasse la limite configurée.");
             string hash;
             await using (var stream = new FileStream(normalized, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete, 131072, FileOptions.SequentialScan | FileOptions.Asynchronous))
                 hash = Convert.ToHexString(await SHA256.HashDataAsync(stream, cancellationToken).ConfigureAwait(false)).ToLowerInvariant();
-            return new(rawPath, expanded, normalized, true, info.Extension, info.Length, info.CreationTimeUtc, info.LastWriteTimeUtc, hash, null, GetSignature(normalized), EvidenceConfidence.High, "Owner collection is not enabled in this MVP.");
+            return new(rawPath, expanded, normalized, true, info.Extension, info.Length, info.CreationTimeUtc, info.LastWriteTimeUtc, hash, null, GetSignature(normalized), EvidenceConfidence.High, "La collecte du propriétaire n’est pas activée dans ce MVP.");
         }
-        catch (UnauthorizedAccessException) { return Unavailable(rawPath, expanded, normalized, SignatureStatus.AccessDenied, "Access was denied."); }
+        catch (UnauthorizedAccessException) { return Unavailable(rawPath, expanded, normalized, SignatureStatus.AccessDenied, "Accès refusé."); }
         catch (IOException exception) { return Unavailable(rawPath, expanded, normalized, SignatureStatus.Error, exception.Message); }
         catch (CryptographicException exception) { return Unavailable(rawPath, expanded, normalized, SignatureStatus.Error, exception.Message); }
     }
@@ -40,9 +40,9 @@ public sealed class StreamingFileEvidenceProvider(int maximumMegabytes = 512) : 
         {
             using var certificate = X509Certificate.CreateFromSignedFile(path);
             return new(SignatureStatus.SignedUntrusted, certificate.Subject, certificate.Issuer, null, null, null,
-                "A signing certificate was found; Windows chain trust is not evaluated in this MVP.");
+                "Un certificat de signature a été trouvé ; la confiance de la chaîne Windows n’est pas évaluée dans ce MVP.");
         }
-        catch (CryptographicException) { return new(SignatureStatus.Unsigned, null, null, null, null, null, "No readable embedded signing certificate."); }
+        catch (CryptographicException) { return new(SignatureStatus.Unsigned, null, null, null, null, null, "Aucun certificat de signature incorporé lisible."); }
     }
 
     private static FileEvidence Unavailable(string raw, string expanded, string? normalized, SignatureStatus status, string limitation) =>

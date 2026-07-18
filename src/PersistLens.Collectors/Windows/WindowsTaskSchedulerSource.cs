@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace PersistLens.Collectors.Windows;
 
-/// <summary>Read-only Task Scheduler 2.0 COM automation source. All COM use remains inside this class.</summary>
+/// <summary>Source d’automation COM Task Scheduler 2.0 en lecture seule. Toute utilisation COM reste isolée dans cette classe.</summary>
 public sealed class WindowsTaskSchedulerSource : IScheduledTaskSource
 {
     private const int IncludeHiddenTasks = 1;
@@ -12,13 +12,13 @@ public sealed class WindowsTaskSchedulerSource : IScheduledTaskSource
     public Task<ScheduledTaskSourceResult> EnumerateAsync(CancellationToken cancellationToken)
     {
         var tasks = new List<ScheduledTaskSourceTask>(); var errors = new List<ScheduledTaskSourceError>(); object? service = null; object? root = null;
-        if (!OperatingSystem.IsWindows()) return Task.FromResult(new ScheduledTaskSourceResult(tasks, [new("Windows", "PlatformNotSupported", "Task Scheduler 2.0 is supported only on Windows.")]));
+        if (!OperatingSystem.IsWindows()) return Task.FromResult(new ScheduledTaskSourceResult(tasks, [new("Windows", "PlatformNotSupported", "Task Scheduler 2.0 est pris en charge uniquement sous Windows.")]));
         try
         {
-            var serviceType = Type.GetTypeFromProgID("Schedule.Service", throwOnError: true) ?? throw new InvalidOperationException("Task Scheduler COM class is unavailable.");
-            service = Activator.CreateInstance(serviceType) ?? throw new InvalidOperationException("Task Scheduler COM service could not be created.");
+            var serviceType = Type.GetTypeFromProgID("Schedule.Service", throwOnError: true) ?? throw new InvalidOperationException("La classe COM Task Scheduler est indisponible.");
+            service = Activator.CreateInstance(serviceType) ?? throw new InvalidOperationException("Impossible de créer le service COM Task Scheduler.");
             Invoke(service, "Connect", Type.Missing, Type.Missing, Type.Missing, Type.Missing);
-            root = Invoke(service, "GetFolder", "\\") ?? throw new InvalidOperationException("Task Scheduler root folder is unavailable.");
+            root = Invoke(service, "GetFolder", "\\") ?? throw new InvalidOperationException("Le dossier racine de Task Scheduler est indisponible.");
             VisitFolder(root, tasks, errors, cancellationToken);
         }
         catch (COMException exception) { errors.Add(Error("TaskScheduler", exception)); }

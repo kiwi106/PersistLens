@@ -9,13 +9,13 @@ public sealed class WindowsCommandParser
 
     public PersistenceCommand Parse(string? raw, string? workingDirectory = null)
     {
-        if (string.IsNullOrWhiteSpace(raw)) return PersistenceCommand.RawOnly(raw ?? string.Empty, "Empty command.");
+        if (string.IsNullOrWhiteSpace(raw)) return PersistenceCommand.RawOnly(raw ?? string.Empty, "Commande vide.");
         var expanded = Environment.ExpandEnvironmentVariables(raw.Trim());
         if (expanded[0] == '\"')
         {
             var closing = expanded.IndexOf('\"', 1);
             if (closing > 0) return Build(expanded, expanded[1..closing], expanded[(closing + 1)..].TrimStart(), workingDirectory, EvidenceConfidence.High, null);
-            return PersistenceCommand.RawOnly(raw, "Unterminated quote.");
+            return PersistenceCommand.RawOnly(raw, "Guillemet non fermé.");
         }
         var tokens = expanded.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         var candidate = string.Empty;
@@ -23,9 +23,9 @@ public sealed class WindowsCommandParser
         {
             candidate = candidate.Length == 0 ? tokens[index] : $"{candidate} {tokens[index]}";
             if (Extensions.Any(extension => candidate.EndsWith(extension, StringComparison.OrdinalIgnoreCase)))
-                return Build(expanded, candidate, string.Join(' ', tokens.Skip(index + 1)), workingDirectory, EvidenceConfidence.Medium, "Unquoted path was inferred from a known extension.");
+                return Build(expanded, candidate, string.Join(' ', tokens.Skip(index + 1)), workingDirectory, EvidenceConfidence.Medium, "Le chemin non entouré de guillemets a été déduit d’une extension connue.");
         }
-        return new(raw, null, null, workingDirectory, tokens.Take(3).ToArray(), EvidenceConfidence.Low, "No executable boundary could be determined safely.");
+        return new(raw, null, null, workingDirectory, tokens.Take(3).ToArray(), EvidenceConfidence.Low, "Impossible de déterminer de manière sûre la limite de l’exécutable.");
     }
 
     private static PersistenceCommand Build(string raw, string executable, string arguments, string? workingDirectory, EvidenceConfidence confidence, string? reason)
@@ -33,6 +33,6 @@ public sealed class WindowsCommandParser
         var file = Path.GetFileName(executable);
         var indirect = Interpreters.Contains(file);
         return new(raw, executable, arguments, workingDirectory, [executable], indirect ? EvidenceConfidence.Medium : confidence,
-            indirect ? "Interpreter command; the final payload may be indirect." : reason);
+            indirect ? "Commande interprétée ; la charge finale peut être indirecte." : reason);
     }
 }

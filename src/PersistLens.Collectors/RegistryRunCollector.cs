@@ -11,7 +11,7 @@ public sealed class RegistryRunCollector(WindowsCommandParser parser, IClock clo
     public Task<CollectorResult> CollectAsync(CollectionContext context, CancellationToken cancellationToken)
     {
         var entries = new List<PersistenceEntry>(); var errors = new List<CollectionError>();
-        if (!OperatingSystem.IsWindows()) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(RegistryRunCollector), "Windows", "Registry collection is supported only on Windows.")]));
+        if (!OperatingSystem.IsWindows()) return Task.FromResult(new CollectorResult(Type, entries, [new(nameof(RegistryRunCollector), "Windows", "La collecte Registry est prise en charge uniquement sous Windows.")]));
         foreach (var hive in new[] { RegistryHive.CurrentUser, RegistryHive.LocalMachine })
             foreach (var view in new[] { RegistryView.Registry64, RegistryView.Registry32 })
                 foreach (var subKey in SubKeys)
@@ -27,7 +27,7 @@ public sealed class RegistryRunCollector(WindowsCommandParser parser, IClock clo
                         {
                             var kind = key.GetValueKind(name); var value = key.GetValue(name, null, RegistryValueOptions.DoNotExpandEnvironmentNames);
                             var raw = value as string;
-                            if (raw is null) { errors.Add(new(nameof(RegistryRunCollector), location, $"Value '{name}' has unsupported type {kind}.")); continue; }
+                            if (raw is null) { errors.Add(new(nameof(RegistryRunCollector), location, $"La valeur « {name} » a le type non pris en charge {kind}.")); continue; }
                             var parsed = parser.Parse(raw);
                             entries.Add(PersistenceEntry.Create(Type, nameof(RegistryRunCollector), new(location, view.ToString()), name, raw, parsed, hive == RegistryHive.CurrentUser ? context.OperatingContext.User : "SYSTEM", new Dictionary<string, string> { ["registryValueType"] = kind.ToString() }, null, clock.UtcNow));
                         }

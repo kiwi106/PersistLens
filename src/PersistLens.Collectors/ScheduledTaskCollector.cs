@@ -2,7 +2,7 @@
 
 namespace PersistLens.Collectors;
 
-/// <summary>Maps typed Task Scheduler source data into persistence entries without invoking tasks.</summary>
+/// <summary>Transforme les données typées de Task Scheduler en entrées de persistance sans lancer de tâche.</summary>
 public sealed class ScheduledTaskCollector(IScheduledTaskSource source, WindowsCommandParser parser, IClock clock) : IPersistenceCollector
 {
     public PersistenceType Type => PersistenceType.ScheduledTask;
@@ -29,14 +29,14 @@ public sealed class ScheduledTaskCollector(IScheduledTaskSource source, WindowsC
         if (!string.IsNullOrWhiteSpace(task.RunLevel)) metadata["runLevel"] = task.RunLevel;
         if (task.Actions.Count == 0)
         {
-            yield return PersistenceEntry.Create(Type, nameof(ScheduledTaskCollector), new(task.Path), name, string.Empty, PersistenceCommand.RawOnly(string.Empty, "Task has no Exec action."), principal, metadata, null, clock.UtcNow);
+            yield return PersistenceEntry.Create(Type, nameof(ScheduledTaskCollector), new(task.Path), name, string.Empty, PersistenceCommand.RawOnly(string.Empty, "La tâche ne contient aucune action Exec."), principal, metadata, null, clock.UtcNow);
             yield break;
         }
         for (var index = 0; index < task.Actions.Count; index++)
         {
             var action = task.Actions[index];
             var raw = string.IsNullOrWhiteSpace(action.Program) ? action.Arguments : $"\"{action.Program}\" {action.Arguments}".Trim();
-            var command = string.IsNullOrWhiteSpace(action.Program) ? PersistenceCommand.RawOnly(raw, "Exec action has no program.") : parser.Parse(raw, action.WorkingDirectory);
+            var command = string.IsNullOrWhiteSpace(action.Program) ? PersistenceCommand.RawOnly(raw, "L’action Exec ne contient aucun programme.") : parser.Parse(raw, action.WorkingDirectory);
             yield return PersistenceEntry.Create(Type, nameof(ScheduledTaskCollector), new(task.Path), $"{name}:{index}", raw, command, principal, metadata, null, clock.UtcNow);
         }
     }

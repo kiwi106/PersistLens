@@ -1,5 +1,5 @@
-## Summary
+## Résumé
 
 ## Validation
 
-## Privacy/security impact
+## Impact confidentialité et sécurité

@@ -25,7 +25,7 @@ public sealed class ScheduledTaskCollectorTests
         var result = await Collector(new FakeSource([CreateTask("\\Disabled", false, [])])).CollectAsync(Context, CancellationToken.None);
         var entry = Assert.Single(result.Entries);
         Assert.Equal("Disabled", entry.Metadata["state"]);
-        Assert.Equal("Task has no Exec action.", entry.Command.UncertaintyReason);
+        Assert.Equal("La tâche ne contient aucune action Exec.", entry.Command.UncertaintyReason);
     }
 
     [Fact]

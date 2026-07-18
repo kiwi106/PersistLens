@@ -1,3 +1,3 @@
-# Code of Conduct
+# Code de conduite
 
-Be respectful, constructive, and security-conscious. Harassment, disclosure of private data, and unsafe instructions are not acceptable. Report conduct concerns privately to the maintainer.
+Adoptez un comportement respectueux, constructif et attentif à la sécurité. Le harcèlement, la divulgation de données privées et les instructions dangereuses ne sont pas acceptables. Signalez les préoccupations de conduite de manière privée au mainteneur.

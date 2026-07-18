@@ -1,3 +1,3 @@
 # Roadmap
 
-Future work: native Service Control Manager state/config interop, Task Scheduler COM abstraction, safe `.lnk` resolution, Windows trust-chain verification, owner evidence, redacted reports, signed snapshots, additional persistence mechanisms, and opt-in monitoring. None of these are present in this MVP.
+Pistes futures : état/configuration avancée du Service Control Manager, résolution sûre des `.lnk`, validation de chaîne Authenticode Windows, propriétaire de fichier, rédaction de rapports, snapshots signés, mécanismes de persistance supplémentaires et surveillance explicitement activée. Ces fonctions ne font pas partie du MVP.

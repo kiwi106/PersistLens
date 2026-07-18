@@ -17,9 +17,9 @@ public sealed class StartupFolderCollector(WindowsCommandParser parser, IClock c
                 {
                     cancellationToken.ThrowIfCancellationRequested();
                     var attributes = File.GetAttributes(file);
-                    if ((attributes & FileAttributes.ReparsePoint) != 0) { errors.Add(new(nameof(StartupFolderCollector), file, "Reparse point was not followed.")); continue; }
+                    if ((attributes & FileAttributes.ReparsePoint) != 0) { errors.Add(new(nameof(StartupFolderCollector), file, "Le point de réanalyse n’a pas été suivi.")); continue; }
                     var isShortcut = file.EndsWith(".lnk", StringComparison.OrdinalIgnoreCase);
-                    var command = isShortcut ? PersistenceCommand.RawOnly(file, "Shortcut resolution is unavailable without executing COM in this MVP.") : parser.Parse($"\"{file}\"");
+                    var command = isShortcut ? PersistenceCommand.RawOnly(file, "La résolution des raccourcis est indisponible dans ce MVP.") : parser.Parse($"\"{file}\"");
                     entries.Add(PersistenceEntry.Create(Type, nameof(StartupFolderCollector), new(location), Path.GetFileName(file), file, command, context.OperatingContext.User,
                         new Dictionary<string, string> { ["isShortcut"] = isShortcut.ToString() }, null, clock.UtcNow));
                 }

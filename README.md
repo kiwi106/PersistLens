@@ -1,52 +1,105 @@
 # PersistLens
 
-PersistLens is a local-first, defensive Windows console tool for inventorying selected persistence mechanisms, saving JSON snapshots, and comparing them. It is not an antivirus: an unfamiliar entry, an unsigned file, or a caution indicator is not proof of malware.
+## 1. Présentation
 
-## MVP
+PersistLens est un outil Windows défensif, local-first et en ligne de commande. Il inventorie certains mécanismes de persistance, crée des snapshots (instantanés de l’état du système) et compare leurs changements.
 
-The MVP inventories Registry Run/RunOnce locations (both views), automatic services, Task Scheduler 2.0 tasks, and user/common Startup folders. It records partial collection errors, parses commands without executing them, enriches resolved local targets with streaming SHA-256 and limited certificate evidence, and supports inventory, snapshots, diffs, inspection, terminal output, and JSON output.
+## 2. Pourquoi PersistLens existe
 
-### Implemented in this MVP
+Les mécanismes de démarrage automatique sont nombreux et leurs changements méritent d’être visibles, documentés et comparables. PersistLens présente des faits observés, des erreurs de collecte et des indicateurs de prudence, sans verdict automatique.
 
-- Read-only Registry Run/RunOnce, automatic-service configuration, Task Scheduler 2.0 COM enumeration, and Startup-folder collection.
-- Full SHA-256 computed through streaming for eligible resolved local files.
-- Local JSON snapshots, deterministic entry/change ordering, and structured partial errors.
+> PersistLens n’est pas un antivirus. Une entrée inconnue, non signée ou modifiée n’est pas nécessairement malveillante.
 
-### Partial capabilities
+## 3. Fonctionnalités
 
-- Certificate evidence only detects a readable embedded signing certificate. It does **not** perform authoritative Windows Authenticode trust-chain validation.
-- `.lnk` files are inventoried but their targets, arguments, and working directories are **not** resolved.
-- File ownership is not collected.
-- Service current state and scheduled-task runtime state are reported as unavailable/unknown. Task Scheduler 2.0 is used only to read definitions; no task is run or changed.
-- Files above 512 MiB are not hashed; ambiguous commands remain unresolved.
+- Inventaire en lecture seule des clés Registry Run/RunOnce, services automatiques, tâches planifiées Task Scheduler 2.0 et dossiers Startup.
+- Parcours récursif des dossiers et tâches via l’API officielle `Schedule.Service`, sans lecture de `System32\Tasks`.
+- Snapshots JSON locaux, écriture atomique, lecture, liste et suppression.
+- Diff déterministe : entrées ajoutées, supprimées et modifiées.
+- SHA-256 en streaming pour les fichiers locaux résolus.
+- Sorties terminal et JSON scriptables.
 
-### Outside the MVP
+## 4. Fonctionnalités partielles
 
-Real-time monitoring, remediation/blocking, cloud lookups, telemetry, reputation services, and malware verdicts are not implemented.
+- Un certificat de signature lisible est une preuve limitée : PersistLens ne valide pas la chaîne de confiance Authenticode Windows.
+- Les raccourcis `.lnk` sont inventoriés, sans résolution de cible, arguments ou dossier de travail.
+- Le propriétaire de fichier et l’état courant des services/tâches ne sont pas collectés.
+- Les tâches ou dossiers protégés peuvent rester inaccessibles et produire une erreur partielle structurée.
 
-It does not monitor in real time, block/remove persistence, use cloud reputation, upload data, or make malware verdicts.
+## 5. Limitations
 
-## Prerequisites and build
+PersistLens fonctionne sous Windows. Les commandes ambiguës restent non résolues, les fichiers dépassant 512 Mio ne sont pas hashés et la rédaction automatique des rapports n’est pas encore disponible. Consultez [docs/limitations.md](docs/limitations.md).
 
-Requires the installed .NET 8 SDK on Windows. `dotnet restore`, `dotnet build --configuration Release`, and `dotnet test --configuration Release --no-build` build and test the solution. Run the CLI with `dotnet run --project src/PersistLens.Cli -- inventory`.
+## 6. Prérequis
 
-## Usage
+- Windows.
+- SDK .NET 8 installé.
 
+## 7. Compilation
+
+```powershell
+dotnet restore
+dotnet build --configuration Release --no-restore
+dotnet test --configuration Release --no-build
 ```
-persistlens inventory
-persistlens inventory --format json
-persistlens snapshot create --name clean
-persistlens snapshot list
-persistlens snapshot show clean
-persistlens snapshot delete clean
-persistlens diff clean current --format json
-persistlens inspect <entry-id>
+
+## 8. Utilisation
+
+```powershell
+dotnet run --project src/PersistLens.Cli -- --help
+dotnet run --project src/PersistLens.Cli -- inventory
+dotnet run --project src/PersistLens.Cli -- inventory --format json
+dotnet run --project src/PersistLens.Cli -- snapshot create --name clean
+dotnet run --project src/PersistLens.Cli -- diff clean current --format json
 ```
 
-Snapshots default to `%LOCALAPPDATA%\PersistLens\snapshots`; pass `--storage <directory>` to isolate tests or choose another local directory. Snapshot names accept only ASCII letters, digits, `_`, and `-`, preventing traversal. Exit codes are 0 success, 1 differences found, 2 invalid input, 3 operational failure, and 4 significant partial collection errors. Code 4 means usable entries were returned but at least one collector reported a structured error; `snapshot create` still writes and can later read that partial snapshot. Terminal output prints every warning and JSON includes them in `result.errors` or snapshot metadata.
+Les snapshots sont stockés par défaut dans `%LOCALAPPDATA%\PersistLens\snapshots`. Utilisez `--storage <dossier>` pour choisir un emplacement local différent. Les noms autorisés contiennent uniquement lettres ASCII, chiffres, `_` et `-`.
 
-## Privacy and security
+## 9. Exemples
 
-PersistLens makes no network calls, has no account or telemetry, and never executes discovered commands. JSON snapshots and reports may contain command lines and paths, which can contain sensitive information; treat them as sensitive. Some service/task information may be unavailable without elevation.
+```text
+Inventaire PersistLens : 314 entrées, 0 erreur(s) de collecte
+[Tâche planifiée] Exemple:0
+  Emplacement : \Exemple
+  Commande : "C:\Program Files\Exemple\agent.exe" --quiet
+```
 
-See [architecture](docs/architecture.md), [limitations](docs/limitations.md), [security model](docs/security-model.md), [threat model](docs/threat-model.md), and [roadmap](docs/roadmap.md). Contributions follow [CONTRIBUTING.md](CONTRIBUTING.md); the project uses the [MIT License](LICENSE).
+## 10. Codes de sortie
+
+| Code | Signification |
+| --- | --- |
+| 0 | Succès |
+| 1 | Différences détectées par `diff` |
+| 2 | Entrée utilisateur invalide |
+| 3 | Erreur opérationnelle |
+| 4 | Collecte partielle : les résultats valides et les erreurs sont conservés |
+
+Un `snapshot create` avec le code 4 écrit malgré tout un snapshot lisible contenant les erreurs de collecte dans ses métadonnées.
+
+## 11. Confidentialité
+
+PersistLens ne transmet aucune donnée, ne demande aucun compte et n’utilise ni télémétrie ni service cloud. Les snapshots peuvent contenir des chemins et lignes de commande sensibles : traitez-les comme des données sensibles.
+
+## 12. Sécurité
+
+PersistLens n’exécute jamais les commandes ou tâches découvertes et ne modifie ni ne supprime les mécanismes de persistance. Certaines informations peuvent nécessiter des permissions supplémentaires. Consultez [docs/security-model.md](docs/security-model.md) et [docs/threat-model.md](docs/threat-model.md).
+
+## 13. Architecture
+
+`Domain` contient les modèles et interfaces ; `Application` orchestre l’inventaire et le diff ; `Collectors`, `Enrichment`, `Storage` et `Reporting` isolent les intégrations. La CLI compose ces projets. Détails : [docs/architecture.md](docs/architecture.md).
+
+## 14. Tests
+
+La suite xUnit couvre les identifiants, diff, validation de snapshots, JSON invalide, parsing prudent, erreurs partielles, Task Scheduler, CLI et intégration Windows en lecture seule.
+
+## 15. Contribution
+
+Consultez [CONTRIBUTING.md](CONTRIBUTING.md). N’ajoutez ni snapshots réels ni rapports sensibles au dépôt.
+
+## 16. Roadmap
+
+La roadmap est disponible dans [docs/roadmap.md](docs/roadmap.md).
+
+## 17. Licence
+
+PersistLens est distribué sous licence [MIT](LICENSE).

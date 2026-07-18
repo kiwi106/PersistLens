@@ -41,7 +41,7 @@ public sealed class JsonSnapshotStore : ISnapshotStore
     {
         await using var stream = new FileStream(PathFor(name), FileMode.Open, FileAccess.Read, FileShare.Read, 65536, FileOptions.SequentialScan | FileOptions.Asynchronous);
         return await JsonSerializer.DeserializeAsync<PersistenceSnapshot>(stream, options, cancellationToken).ConfigureAwait(false)
-            ?? throw new InvalidDataException("Snapshot JSON is empty or invalid.");
+            ?? throw new InvalidDataException("Le JSON du snapshot est vide ou invalide.");
     }
 
     public Task<IReadOnlyList<string>> ListAsync(CancellationToken cancellationToken)

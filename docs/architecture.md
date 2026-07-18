@@ -1,5 +1,7 @@
 # Architecture
 
-`Domain` contains immutable records and interfaces only. `Application` orchestrates inventory, snapshots, and deterministic diffs. `Collectors` contains Windows-facing read-only collectors and safe parsing. `Enrichment` hashes files by stream. `Storage` performs validated atomic JSON persistence. `Reporting` owns terminal/JSON presentation; `Cli` composes them. Dependencies point inward toward Domain.
+`Domain` contient les modèles immuables et les interfaces, sans dépendance aux API Windows ni à JSON. `Application` orchestre inventaire, snapshots et diff. `Collectors` isole les collecteurs Windows ; `Enrichment` collecte les preuves de fichiers ; `Storage` persiste les snapshots ; `Reporting` présente les résultats ; `Cli` compose l’ensemble.
 
-Stable IDs are SHA-256 of uppercase, trimmed type/location/name/run-as fields separated by U+001F. State hashes use a separate SHA-256 canonical representation containing command, resolved target, arguments, selected evidence, and sorted metadata. Neither includes collection time or snapshot path.
+Le collecteur de tâches dépend de `IScheduledTaskSource`. Sa source Windows isole l’automation COM Task Scheduler 2.0 et libère les références COM. Le collecteur métier ne dépend ni de COM ni du système de fichiers.
+
+Les identifiants stables sont des SHA-256 de type, emplacement, nom et contexte normalisés. Le hash d’état est distinct : il couvre commande, cible, arguments, preuves sélectionnées et métadonnées triées, mais ni l’heure de collecte ni le chemin du snapshot.

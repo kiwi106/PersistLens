@@ -1,3 +1,5 @@
-# Security policy
+# Politique de sécurité
 
-Report vulnerabilities privately to the project maintainer; do not include sensitive snapshots, commands, certificates, or machine data in public issues. PersistLens intentionally performs read-only collection and has no automatic elevation, remediation, telemetry, or network reporting.
+Signalez les vulnérabilités de manière privée au mainteneur. N’incluez jamais de snapshots, commandes, certificats ou données machine sensibles dans une issue publique.
+
+PersistLens effectue uniquement des collectes en lecture seule. Il ne demande pas d’élévation automatique, n’exécute aucune commande découverte, ne remédie à aucune persistance et ne transmet aucune donnée.

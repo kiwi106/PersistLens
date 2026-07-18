@@ -1,6 +1,12 @@
 ---
-name: Bug report
-about: Report reproducible behavior without sensitive inventory data
+name: Rapport de bug
+about: Signaler un comportement reproductible sans données d’inventaire sensibles
 ---
 
-Describe the behavior, expected behavior, PersistLens version, and Windows version. Redact commands, paths, hashes, and snapshots.
+## Comportement observé
+
+## Comportement attendu
+
+## Environnement
+
+Indiquez la version de PersistLens et celle de Windows. Masquez les chemins, commandes, hashes et snapshots réels.

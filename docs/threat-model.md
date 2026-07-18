@@ -1,3 +1,5 @@
-# Threat model
+# Modèle de menaces
 
-Malformed Registry values, Task Scheduler definition XML, paths, links, and files are handled as data, not instructions. Task Scheduler RPC/COM failures and per-folder or per-task access denials become partial errors while accessible tasks are retained. XML entity expansion is disabled and definition size is bounded. Large files are bounded; task XML has a character limit. Snapshots can be altered by a local user with write access and are not signed; protect the storage directory if integrity matters. Reports can disclose paths and command-line secrets. Dependencies are limited to the .NET runtime and test-only xUnit packages.
+Les valeurs Registry, XML Task Scheduler, chemins, liens et fichiers sont traités comme des données, jamais comme des instructions. Les erreurs RPC/COM et accès refusés d’un dossier ou d’une tâche deviennent des erreurs partielles. Les entités XML externes sont désactivées et la taille des définitions est bornée.
+
+Les snapshots ne sont pas signés et peuvent être altérés par un utilisateur qui peut écrire dans leur dossier. Les rapports peuvent révéler des chemins et secrets présents dans des lignes de commande. Ne publiez pas de snapshots ou rapports réels.

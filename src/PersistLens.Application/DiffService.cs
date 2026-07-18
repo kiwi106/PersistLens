@@ -25,7 +25,7 @@ public sealed class DiffService
         var fields = type == ChangeType.Modified ? ChangedFields(before!, after!) : Array.Empty<string>();
         var item = after ?? before!;
         var indicators = CautionIndicators(item).ToArray();
-        return new(type, item.StableId, before, after, fields, $"{type}: {item.Type} {item.Name}", indicators);
+        return new(type, item.StableId, before, after, fields, $"{Display(type)} : {item.Type} {item.Name}", indicators);
     }
 
     private static IReadOnlyList<string> ChangedFields(PersistenceEntry before, PersistenceEntry after)
@@ -51,4 +51,6 @@ public sealed class DiffService
         if (path.Contains("\\Temp\\", StringComparison.OrdinalIgnoreCase)) yield return "temporary-path";
         if (entry.Command.Confidence is EvidenceConfidence.None or EvidenceConfidence.Low) yield return "ambiguous-command";
     }
+
+    private static string Display(ChangeType type) => type switch { ChangeType.Added => "Ajoutée", ChangeType.Removed => "Supprimée", ChangeType.Modified => "Modifiée", _ => type.ToString() };
 }
