@@ -4,4 +4,6 @@
 
 Le collecteur de tâches dépend de `IScheduledTaskSource`. Sa source Windows isole l’automation COM Task Scheduler 2.0 et libère les références COM. Le collecteur métier ne dépend ni de COM ni du système de fichiers.
 
+L’enrichissement dépend de `IAuthenticodeVerifier`. `WindowsAuthenticodeVerifier` isole `WinVerifyTrust`, ses structures natives et le mapping HRESULT ; le domaine ne dépend ni du P/Invoke ni de CryptoAPI.
+
 Les identifiants stables sont des SHA-256 de type, emplacement, nom et contexte normalisés. Le hash d’état est distinct : il couvre commande, cible, arguments, preuves sélectionnées et métadonnées triées, mais ni l’heure de collecte ni le chemin du snapshot.

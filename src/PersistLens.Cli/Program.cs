@@ -4,6 +4,7 @@ using PersistLens.Collectors;
 using PersistLens.Collectors.Windows;
 using PersistLens.Domain;
 using PersistLens.Enrichment;
+using PersistLens.Enrichment.Windows;
 using PersistLens.Reporting;
 using PersistLens.Storage;
 
@@ -22,7 +23,7 @@ public static class PersistLensProgram
             if (parsed.ShowHelp) { await output.WriteLineAsync(Help).ConfigureAwait(false); return 0; }
             if (parsed.ShowVersion) { await output.WriteLineAsync(Version).ConfigureAwait(false); return 0; }
             var clock = new SystemClock(); var commandParser = new WindowsCommandParser();
-            var inventory = new InventoryService([new RegistryRunCollector(commandParser, clock), new ServiceCollector(commandParser, clock), new ScheduledTaskCollector(new WindowsTaskSchedulerSource(), commandParser, clock), new StartupFolderCollector(commandParser, clock)], clock, new StreamingFileEvidenceProvider());
+            var inventory = new InventoryService([new RegistryRunCollector(commandParser, clock), new ServiceCollector(commandParser, clock), new ScheduledTaskCollector(new WindowsTaskSchedulerSource(), commandParser, clock), new StartupFolderCollector(commandParser, clock)], clock, new StreamingFileEvidenceProvider(new WindowsAuthenticodeVerifier()));
             var context = GetContext(); var store = new JsonSnapshotStore(parsed.StorageDirectory); IReporter reporter = parsed.Json ? new JsonReporter() : new TerminalReporter();
             return parsed.Command switch
             {
