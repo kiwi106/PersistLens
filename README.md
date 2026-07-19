@@ -19,6 +19,7 @@ Les mécanismes de démarrage automatique sont nombreux et leurs changements mé
 - SHA-256 en streaming pour les fichiers locaux résolus.
 - Validation Authenticode Windows avec distinction entre signature présente, validité cryptographique et confiance de chaîne.
 - Sorties terminal et JSON scriptables.
+- Mode explicite `--redact` pour produire un rapport partageable avec masquage best effort à la frontière de présentation.
 
 ## 4. Fonctionnalités partielles
 
@@ -30,7 +31,7 @@ Les mécanismes de démarrage automatique sont nombreux et leurs changements mé
 
 ## 5. Limitations
 
-PersistLens fonctionne sous Windows. Les commandes ambiguës restent non résolues, les fichiers dépassant 512 Mio ne sont pas hashés et la rédaction automatique des rapports n’est pas encore disponible. Consultez [docs/limitations.md](docs/limitations.md).
+PersistLens fonctionne sous Windows. Les commandes ambiguës restent non résolues, les fichiers dépassant 512 Mio ne sont pas hashés et le masquage est best effort : il ne détecte pas tous les secrets possibles. Consultez [docs/limitations.md](docs/limitations.md).
 
 ## 6. Prérequis
 
@@ -51,7 +52,9 @@ dotnet test --configuration Release --no-build
 dotnet run --project src/PersistLens.Cli -- --help
 dotnet run --project src/PersistLens.Cli -- inventory
 dotnet run --project src/PersistLens.Cli -- inventory --format json
+dotnet run --project src/PersistLens.Cli -- inventory --format json --redact
 dotnet run --project src/PersistLens.Cli -- snapshot create --name clean
+dotnet run --project src/PersistLens.Cli -- snapshot show clean --redact
 dotnet run --project src/PersistLens.Cli -- diff clean current --format json
 ```
 
@@ -78,9 +81,13 @@ Inventaire PersistLens : 314 entrées, 0 erreur(s) de collecte
 
 Un `snapshot create` avec le code 4 écrit malgré tout un snapshot lisible contenant les erreurs de collecte dans ses métadonnées.
 
-## 11. Confidentialité
+## 11. Confidentialité et masquage
 
 PersistLens ne transmet aucune donnée, ne demande aucun compte et n’utilise ni télémétrie ni service cloud. Les snapshots peuvent contenir des chemins et lignes de commande sensibles : traitez-les comme des données sensibles.
+
+`--redact` ne change que le rapport demandé, terminal ou JSON. Il masque notamment les identités et comptes Windows, le nom de machine, les segments `C:\Users\…`, les valeurs explicites de mots de passe/jetons/clés API, certaines chaînes de connexion et les URI avec identifiants. Les identifiants stables PersistLens, hashes SHA-256 complets, types, noms de paramètres, statuts Authenticode, HRESULT, protocoles et ports sont conservés.
+
+Les snapshots locaux restent toujours complets et originaux, y compris après une sortie avec `--redact`; `snapshot create` n’accepte donc pas cette option. Même avec `--redact`, un rapport doit être relu avant d’être partagé. PersistLens ne peut pas garantir la détection de tous les secrets possibles.
 
 ## 12. Sécurité
 
