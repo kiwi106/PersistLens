@@ -5,3 +5,5 @@
 `SignatureEvidence` conserve un statut métier, le HRESULT natif `WinVerifyTrust`, un message humain, les indicateurs de présence de signature, validité cryptographique et confiance de chaîne, ainsi que les métadonnées de certificat disponibles. Les champs d’horodatage sont prévus par le schéma et restent absents lorsque l’API ne les expose pas de manière fiable. Aucun certificat binaire n’est stocké.
 
 Les nouveaux champs de signature sont optionnels : les snapshots 0.1.0 restent lisibles. Les noms de champs JSON, valeurs d’enums et versions de schéma restent en anglais pour garantir la stabilité des automatisations.
+
+Les rapports avec `--redact` ajoutent facultativement la métadonnée de sortie `redaction` (`applied`, `version`, `categories`). Ce n’est pas un changement du modèle de snapshot : les entrées, erreurs et contexte sont copiés puis masqués seulement pour le reporter.
