@@ -125,6 +125,25 @@ public sealed class ReportRedactorTests
         Assert.Equal("<TEXTE_TROP_LONG_MASQUÉ>", empty.Entries[2].Command.Raw);
     }
 
+    [Fact]
+    public async Task Shortcut_fields_are_serialized_reported_in_french_and_redacted()
+    {
+        var entry = Entry(@"C:\Users\SensitiveUserName\Startup\agent.lnk --token SUPER_SECRET_TOKEN_123") with
+        {
+            Shortcut = new(@"C:\Users\SensitiveUserName\Startup\agent.lnk", ShortcutResolutionStatus.Resolved, @"C:\Users\SensitiveUserName\agent.exe", @"C:\Users\SensitiveUserName\agent.exe", @"C:\Users\SensitiveUserName\agent.exe", "--token SUPER_SECRET_TOKEN_123", @"C:\Users\SensitiveUserName", "fixture", null, null, 0, "Raccourci résolu.", EvidenceConfidence.High)
+        };
+        using var json = new StringWriter(); using var terminal = new StringWriter();
+        await new JsonReporter(new ReportRedactor()).WriteInventoryAsync(new([entry], [], DateTimeOffset.UnixEpoch), json, CancellationToken.None);
+        await new TerminalReporter(new ReportRedactor()).WriteInventoryAsync(new([entry], [], DateTimeOffset.UnixEpoch), terminal, CancellationToken.None);
+
+        using var document = JsonDocument.Parse(json.ToString());
+        Assert.Equal("resolved", document.RootElement.GetProperty("result").GetProperty("entries")[0].GetProperty("shortcut").GetProperty("status").GetString());
+        Assert.Contains("Raccourci résolu", terminal.ToString(), StringComparison.Ordinal);
+        Assert.Contains("Cible du raccourci", terminal.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain(User, json.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain(Token, terminal.ToString(), StringComparison.Ordinal);
+    }
+
     private static PersistenceSnapshot Snapshot(string name, string command) => new(new(1, "0.1.0", DateTimeOffset.UnixEpoch, new("KIWI-PC", null, "x64", User, false), [], [new("fixture", @"C:\Users\SensitiveUserName", Token)]), [Entry(command, name)]);
 
     private static PersistenceEntry Entry(string command, string name = "entry")

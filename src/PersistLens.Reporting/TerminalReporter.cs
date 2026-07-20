@@ -15,6 +15,13 @@ public sealed class TerminalReporter(ReportRedactor? redactor = null) : IReporte
             await writer.WriteLineAsync($"  Emplacement : {entry.Location.Value}").ConfigureAwait(false);
             await writer.WriteLineAsync($"  Commande : {entry.Command.Raw}").ConfigureAwait(false);
             await writer.WriteLineAsync($"  Cible : {entry.Command.ExecutablePath ?? "non résolue"}").ConfigureAwait(false);
+            if (entry.Shortcut is not null)
+            {
+                await writer.WriteLineAsync($"  Raccourci : {Display(entry.Shortcut.Status)}").ConfigureAwait(false);
+                await writer.WriteLineAsync($"  Cible du raccourci : {entry.Shortcut.NormalizedTargetPath ?? entry.Shortcut.ExpandedTargetPath ?? entry.Shortcut.RawTargetPath ?? "non résolue"}").ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(entry.Shortcut.Arguments)) await writer.WriteLineAsync($"  Arguments : {entry.Shortcut.Arguments}").ConfigureAwait(false);
+                if (!string.IsNullOrWhiteSpace(entry.Shortcut.WorkingDirectory)) await writer.WriteLineAsync($"  Dossier de travail : {entry.Shortcut.WorkingDirectory}").ConfigureAwait(false);
+            }
             await writer.WriteLineAsync($"  Signature : {(entry.FileEvidence is null ? "non collectée" : Display(entry.FileEvidence.Signature.Status))} ; Hash : {entry.FileEvidence?.Sha256?[..Math.Min(12, entry.FileEvidence.Sha256.Length)] ?? "non collecté"}").ConfigureAwait(false);
             if (entry.Command.UncertaintyReason is not null) await writer.WriteLineAsync($"  Note : {entry.Command.UncertaintyReason}").ConfigureAwait(false);
         }
@@ -43,4 +50,5 @@ public sealed class TerminalReporter(ReportRedactor? redactor = null) : IReporte
 
     private static string Display(PersistenceType type) => type switch { PersistenceType.RegistryRun => "Registry Run/RunOnce", PersistenceType.Service => "Service", PersistenceType.ScheduledTask => "Tâche planifiée", PersistenceType.StartupFolder => "Dossier Startup", _ => type.ToString() };
     private static string Display(SignatureStatus status) => status switch { SignatureStatus.Trusted => "Signée et approuvée", SignatureStatus.SignedUntrusted => "Signée, mais non approuvée", SignatureStatus.Invalid => "Signature invalide", SignatureStatus.ExpiredSignature => "Signature ou certificat expiré", SignatureStatus.RevokedCertificate => "Certificat révoqué", SignatureStatus.UntrustedRoot => "Racine de confiance inconnue", SignatureStatus.ExplicitDistrust => "Certificat explicitement non approuvé", SignatureStatus.Unsigned => "Fichier non signé", SignatureStatus.FileMissing => "Fichier introuvable", SignatureStatus.AccessDenied => "Accès refusé", SignatureStatus.UnsupportedFileType => "Type de fichier non pris en charge", SignatureStatus.Unsupported => "Vérification Authenticode impossible", SignatureStatus.Error => "Erreur de vérification", SignatureStatus.Unknown => "Statut de vérification inconnu", _ => status.ToString() };
+    private static string Display(ShortcutResolutionStatus status) => status switch { ShortcutResolutionStatus.Resolved => "Raccourci résolu", ShortcutResolutionStatus.PartiallyResolved => "Résolution partielle", ShortcutResolutionStatus.BrokenTarget => "Cible introuvable", ShortcutResolutionStatus.InvalidShortcut => "Raccourci invalide", ShortcutResolutionStatus.FileNotFound => "Raccourci introuvable", ShortcutResolutionStatus.AccessDenied => "Accès refusé", ShortcutResolutionStatus.Unsupported => "Résolution impossible", ShortcutResolutionStatus.Cancelled => "Résolution annulée", ShortcutResolutionStatus.ResolutionError => "Résolution impossible", _ => "Statut de résolution inconnu" };
 }

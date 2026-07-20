@@ -12,7 +12,7 @@ Les mécanismes de démarrage automatique sont nombreux et leurs changements mé
 
 ## 3. Fonctionnalités
 
-- Inventaire en lecture seule des clés Registry Run/RunOnce, services automatiques, tâches planifiées Task Scheduler 2.0 et dossiers Startup.
+- Inventaire en lecture seule des clés Registry Run/RunOnce, services automatiques, tâches planifiées Task Scheduler 2.0 et dossiers Startup, avec résolution non-exécutante des raccourcis `.lnk`.
 - Parcours récursif des dossiers et tâches via l’API officielle `Schedule.Service`, sans lecture de `System32\Tasks`.
 - Snapshots JSON locaux, écriture atomique, lecture, liste et suppression.
 - Diff déterministe : entrées ajoutées, supprimées et modifiées.
@@ -25,7 +25,7 @@ Les mécanismes de démarrage automatique sont nombreux et leurs changements mé
 
 - Une signature Authenticode approuvée reste une preuve technique limitée : elle ne constitue jamais un verdict de sûreté ou de légitimité.
 - La vérification de révocation est effectuée avec le cache Windows local uniquement : PersistLens ne contacte pas Internet et peut signaler que la révocation est non vérifiable.
-- Les raccourcis `.lnk` sont inventoriés, sans résolution de cible, arguments ou dossier de travail.
+- Les raccourcis `.lnk` sont résolus au mieux ; une cible relative, absente, protégée ou ambiguë reste explicitement signalée et n’est jamais exécutée.
 - Le propriétaire de fichier et l’état courant des services/tâches ne sont pas collectés.
 - Les tâches ou dossiers protégés peuvent rester inaccessibles et produire une erreur partielle structurée.
 

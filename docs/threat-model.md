@@ -7,3 +7,5 @@ Les snapshots ne sont pas signés et peuvent être altérés par un utilisateur 
 Les chemins vérifiés par Authenticode restent non fiables et le fichier peut disparaître ou changer entre inventaire et vérification. Les HRESULT inconnus sont conservés avec un statut `Unknown`, sans interprétation inventée. Une signature approuvée ne constitue pas une preuve d’innocuité.
 
 Le partage d’un rapport demeure un risque : les lignes de commande et métadonnées peuvent contenir des formats de secrets inconnus, ou être sur-masqués. `--redact` réduit l’exposition de catégories explicites sans promettre l’absence de toute donnée personnelle ou confidentielle. Les snapshots locaux sont volontairement inchangés et doivent être protégés comme des données sensibles.
+
+Un raccourci peut être malformé, disparaître pendant sa lecture, désigner un chemin UNC ou relatif, ou retourner des champs trompeurs. PersistLens ne suit pas les points de réanalyse dans Startup et ne traite une cible que comme une preuve de fichier. Les erreurs sont partielles, les HRESULT inconnus restent `Unknown`, et `--redact` couvre aussi les champs de raccourci.

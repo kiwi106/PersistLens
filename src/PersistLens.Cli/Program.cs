@@ -23,7 +23,7 @@ public static class PersistLensProgram
             if (parsed.ShowHelp) { await output.WriteLineAsync(Help).ConfigureAwait(false); return 0; }
             if (parsed.ShowVersion) { await output.WriteLineAsync(Version).ConfigureAwait(false); return 0; }
             var clock = new SystemClock(); var commandParser = new WindowsCommandParser();
-            var inventory = new InventoryService([new RegistryRunCollector(commandParser, clock), new ServiceCollector(commandParser, clock), new ScheduledTaskCollector(new WindowsTaskSchedulerSource(), commandParser, clock), new StartupFolderCollector(commandParser, clock)], clock, new StreamingFileEvidenceProvider(new WindowsAuthenticodeVerifier()));
+            var inventory = new InventoryService([new RegistryRunCollector(commandParser, clock), new ServiceCollector(commandParser, clock), new ScheduledTaskCollector(new WindowsTaskSchedulerSource(), commandParser, clock), new StartupFolderCollector(commandParser, clock, new WindowsShortcutResolver())], clock, new StreamingFileEvidenceProvider(new WindowsAuthenticodeVerifier()));
             var context = GetContext(); var store = new JsonSnapshotStore(parsed.StorageDirectory); var redactor = parsed.Redact ? new ReportRedactor() : null; IReporter reporter = parsed.Json ? new JsonReporter(redactor) : new TerminalReporter(redactor);
             return parsed.Command switch
             {

@@ -18,12 +18,13 @@ public sealed record PersistenceEntry(
     IReadOnlyDictionary<string, string> Metadata,
     FileEvidence? FileEvidence,
     DateTimeOffset CollectedAtUtc,
-    string StateHash)
+    string StateHash,
+    ShortcutTargetEvidence? Shortcut = null)
 {
     public static PersistenceEntry Create(
         PersistenceType type, string collector, PersistenceLocation location, string name, string rawValue,
         PersistenceCommand command, string? runAs, IReadOnlyDictionary<string, string>? metadata,
-        FileEvidence? evidence, DateTimeOffset collectedAtUtc)
+        FileEvidence? evidence, DateTimeOffset collectedAtUtc, ShortcutTargetEvidence? shortcut = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(collector);
         ArgumentException.ThrowIfNullOrWhiteSpace(location.Value);
@@ -32,8 +33,9 @@ public sealed record PersistenceEntry(
         var identity = Canonical(type.ToString(), location.Value, name, runAs ?? string.Empty);
         var state = Canonical(identity, rawValue, command.Raw, command.ExecutablePath ?? string.Empty, command.Arguments ?? string.Empty,
             command.WorkingDirectory ?? string.Empty, evidence?.Sha256 ?? string.Empty, evidence?.Signature.Status.ToString() ?? string.Empty,
+            shortcut?.Status.ToString() ?? string.Empty, shortcut?.NormalizedTargetPath ?? string.Empty, shortcut?.Arguments ?? string.Empty, shortcut?.WorkingDirectory ?? string.Empty,
             string.Join("|", safeMetadata.OrderBy(pair => pair.Key, StringComparer.Ordinal).Select(pair => $"{pair.Key}={pair.Value}")));
-        return new(Hash(identity), type, collector, location, name, rawValue, command, runAs, safeMetadata, evidence, collectedAtUtc, Hash(state));
+        return new(Hash(identity), type, collector, location, name, rawValue, command, runAs, safeMetadata, evidence, collectedAtUtc, Hash(state), shortcut);
     }
 
     private static string Canonical(params string[] values) => string.Join("\u001f", values.Select(value => value.Trim().ToUpperInvariant()));

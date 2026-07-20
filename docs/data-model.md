@@ -7,3 +7,5 @@
 Les nouveaux champs de signature sont optionnels : les snapshots 0.1.0 restent lisibles. Les noms de champs JSON, valeurs d’enums et versions de schéma restent en anglais pour garantir la stabilité des automatisations.
 
 Les rapports avec `--redact` ajoutent facultativement la métadonnée de sortie `redaction` (`applied`, `version`, `categories`). Ce n’est pas un changement du modèle de snapshot : les entrées, erreurs et contexte sont copiés puis masqués seulement pour le reporter.
+
+Une entrée Startup `.lnk` peut contenir `shortcut`, une preuve optionnelle comprenant son statut de résolution, les chemins brut/développé/normalisé de cible, arguments, dossier de travail, description, icône, HRESULT et erreurs partielles. La valeur brute et la commande conservent le raccourci ; la cible reste une information distincte utilisée pour l’enrichissement.
