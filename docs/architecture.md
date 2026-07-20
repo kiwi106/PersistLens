@@ -4,6 +4,8 @@
 
 Le collecteur de tâches dépend de `IScheduledTaskSource`. Sa source Windows isole l’automation COM Task Scheduler 2.0 et libère les références COM. Le collecteur métier ne dépend ni de COM ni du système de fichiers.
 
+Le collecteur Startup dépend de `IShortcutResolver`. `WindowsShortcutResolver` isole l’interop COM typée `IShellLinkW`/`IPersistFile`, les HRESULT et la libération COM. `ShortcutTargetEvidence` est optionnel afin que les snapshots 0.1.0 restent lisibles.
+
 L’enrichissement dépend de `IAuthenticodeVerifier`. `WindowsAuthenticodeVerifier` isole `WinVerifyTrust`, ses structures natives et le mapping HRESULT ; le domaine ne dépend ni du P/Invoke ni de CryptoAPI.
 
 Le masquage est exclusivement une projection de `Reporting`. `ReportRedactor` construit une copie de présentation, puis les reporters terminal ou JSON l’écrivent lorsque `--redact` est explicite. Les objets du domaine, résultats en mémoire, identifiants/hashes et snapshots `Storage` ne sont ni modifiés ni marqués.

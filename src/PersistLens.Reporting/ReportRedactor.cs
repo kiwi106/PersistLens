@@ -104,6 +104,12 @@ public sealed partial class ReportRedactor
         yield return entry.Command.ExecutablePath; yield return entry.Command.Arguments; yield return entry.Command.WorkingDirectory; yield return entry.Command.UncertaintyReason;
         foreach (var candidate in entry.Command.Candidates) yield return candidate;
         foreach (var pair in entry.Metadata) { yield return pair.Key; yield return pair.Value; }
+        if (entry.Shortcut is not null)
+        {
+            yield return entry.Shortcut.ShortcutPath; yield return entry.Shortcut.RawTargetPath; yield return entry.Shortcut.ExpandedTargetPath; yield return entry.Shortcut.NormalizedTargetPath;
+            yield return entry.Shortcut.Arguments; yield return entry.Shortcut.WorkingDirectory; yield return entry.Shortcut.Description; yield return entry.Shortcut.IconLocation; yield return entry.Shortcut.UserMessage;
+            if (entry.Shortcut.PartialErrors is not null) foreach (var error in entry.Shortcut.PartialErrors) yield return error;
+        }
         if (entry.FileEvidence is null) yield break;
         yield return entry.FileEvidence.RawPath; yield return entry.FileEvidence.ExpandedPath; yield return entry.FileEvidence.NormalizedPath; yield return entry.FileEvidence.Owner; yield return entry.FileEvidence.Limitation;
         yield return entry.FileEvidence.Signature.Subject; yield return entry.FileEvidence.Signature.Issuer; yield return entry.FileEvidence.Signature.TrustMessage; yield return entry.FileEvidence.Signature.TimestampSubject; yield return entry.FileEvidence.Signature.TrustSource;
@@ -141,7 +147,22 @@ public sealed partial class ReportRedactor
         },
         RunAs = RedactIdentity(entry.RunAs, context),
         Metadata = RedactMetadata(entry.Metadata, context),
-        FileEvidence = entry.FileEvidence is null ? null : Redact(entry.FileEvidence, context)
+        FileEvidence = entry.FileEvidence is null ? null : Redact(entry.FileEvidence, context),
+        Shortcut = entry.Shortcut is null ? null : Redact(entry.Shortcut, context)
+    };
+
+    private ShortcutTargetEvidence Redact(ShortcutTargetEvidence shortcut, RedactionContext context) => shortcut with
+    {
+        ShortcutPath = RedactString(shortcut.ShortcutPath, context),
+        RawTargetPath = RedactOptionalString(shortcut.RawTargetPath, context),
+        ExpandedTargetPath = RedactOptionalString(shortcut.ExpandedTargetPath, context),
+        NormalizedTargetPath = RedactOptionalString(shortcut.NormalizedTargetPath, context),
+        Arguments = RedactOptionalString(shortcut.Arguments, context),
+        WorkingDirectory = RedactOptionalString(shortcut.WorkingDirectory, context),
+        Description = RedactOptionalString(shortcut.Description, context),
+        IconLocation = RedactOptionalString(shortcut.IconLocation, context),
+        UserMessage = RedactOptionalString(shortcut.UserMessage, context),
+        PartialErrors = shortcut.PartialErrors?.Select(value => RedactString(value, context)).ToArray()
     };
 
     private FileEvidence Redact(FileEvidence evidence, RedactionContext context) => evidence with
